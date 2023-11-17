@@ -3,13 +3,13 @@
 import os
 import sqlite3, time, re
 import subprocess
-from bs4 import BeautifulSoup
+
 
 def DB_Extr(conn, Subdomain, number, Service, Message, Time):
  query = "SELECT * FROM Extraction WHERE Message= '" + Message + "'"
  cursor = conn.execute(query)
  row = cursor.fetchone()
- Date_query = "date +%e/%0m/%Y"
+ Date_query = "date +%e/%0m/%Y-%k:%M"
  rc = subprocess.run( [ Date_query ], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
  Time_stamp= rc.stdout.decode().strip()
  if row is None:
