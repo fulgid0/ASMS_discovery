@@ -7,20 +7,24 @@ import subprocess
 
 def DB_Extr(conn, Subdomain, number, Service, Message, Time):
  query = "SELECT * FROM Extraction WHERE Message= '" + Message + "'"
- cursor = conn.execute(query)
- row = cursor.fetchone()
- Date_query = "date +%e/%0m/%Y-%k:%M"
- rc = subprocess.run( [ Date_query ], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
- Time_stamp= rc.stdout.decode().strip()
- if row is None:
-  query1= "INSERT INTO Extraction (Subdomain, Number, Service, Message, Time, Time_stamp) VALUES ('"+Subdomain+"',  '"+number+"', '"+Service+"', '"+Message+"', '"+Time+"', '"+Time_stamp+"')"
-  try:
-   cursor = conn.execute(query1)
-   conn.commit()
-  except:
-   os.system("echo '"+query1+"' >> BAD_QUERIES.txt")
-  else:
-   print ("New finding: " + Message + " [" + Service + "] - Records created successfully");
+ try:
+  cursor = conn.execute(query)
+ except:
+  os.system("echo '"+query1+"' >> BAD_QUERIES.txt")
+ else:
+  row = cursor.fetchone()
+  Date_query = "date +%e/%0m/%Y-%k:%M"
+  rc = subprocess.run( [ Date_query ], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  Time_stamp= rc.stdout.decode().strip()
+  if row is None:
+   query1= "INSERT INTO Extraction (Subdomain, Number, Service, Message, Time, Time_stamp) VALUES ('"+Subdomain+"',  '"+number+"', '"+Service+"', '"+Message+"', '"+Time+"', '"+Time_stamp+"')"
+   try:
+    cursor = conn.execute(query1)
+    conn.commit()
+   except:
+    os.system("echo '"+query1+"' >> BAD_QUERIES.txt")
+   else:
+    print ("New finding: " + Message + " [" + Service + "] - Records created successfully");
 
 def Scan_Receive_sms(conn, number):
  print("Let's start Receive_smss SCAN of "+number)
