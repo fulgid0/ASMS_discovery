@@ -14,9 +14,13 @@ def DB_Extr(conn, Subdomain, number, Service, Message, Time):
  Time_stamp= rc.stdout.decode().strip()
  if row is None:
   query1= "INSERT INTO Extraction (Subdomain, Number, Service, Message, Time, Time_stamp) VALUES ('"+Subdomain+"',  '"+number+"', '"+Service+"', '"+Message+"', '"+Time+"', '"+Time_stamp+"')"
-  cursor = conn.execute(query1)
-  conn.commit()
-  print ("New finding: " + Message + " [" + Service + "] - Records created successfully");
+  try:
+   cursor = conn.execute(query1)
+   conn.commit()
+  except:
+   os.system("echo '"+query1+"' >> BAD_QUERIES.txt")
+  else:
+   print ("New finding: " + Message + " [" + Service + "] - Records created successfully");
 
 def Scan_Receive_sms(conn, number):
  print("Let's start Receive_smss SCAN of "+number)
