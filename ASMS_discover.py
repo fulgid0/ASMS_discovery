@@ -10,7 +10,8 @@ def DB_Extr(conn, Subdomain, number, Service, Message, Time):
  try:
   cursor = conn.execute(query)
  except:
-  os.system("echo '"+query1+"' >> BAD_QUERIES.txt")
+  Bad_query ='echo "+query+" >> BAD_QUERIES.txt'
+  os.system(Bad_query)
  else:
   row = cursor.fetchone()
   Date_query = "date +%e/%0m/%Y-%k:%M"
@@ -22,7 +23,8 @@ def DB_Extr(conn, Subdomain, number, Service, Message, Time):
     cursor = conn.execute(query1)
     conn.commit()
    except:
-    os.system("echo '"+query1+"' >> BAD_QUERIES.txt")
+    Bad_query ='echo "+query+" >> BAD_QUERIES.txt'
+    os.system(Bad_query)
    else:
     print ("New finding: " + Message + " [" + Service + "] - Records created successfully");
 
