@@ -32,7 +32,7 @@ def Scan_Receive_sms(conn, number):
  print("Let's start Receive_smss SCAN of "+number)
  url = "https://receive-smss.com/sms/" + number + "/"
  sup_file= 'SMS-' + number
- os.system("wget -O " + sup_file + " " + url)
+ os.system("wget -O " + sup_file + " -q " + url)
  Subdomain = "receive-smss.com"
  flag = 0
  with open(sup_file) as file:
@@ -112,6 +112,8 @@ def Ana_Receive_smss():
 
 while True: 
  Ana_Receive_smss()
+ Data_prompt= os.system("date +%k:%M.%S")
+ Print("---- "+Data_prompt+"Execution Hold----")
  time.sleep(180)
 
 
