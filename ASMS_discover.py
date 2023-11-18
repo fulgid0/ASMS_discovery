@@ -113,7 +113,7 @@ def Ana_Receive_smss():
 while True: 
  Ana_Receive_smss()
  Data_prompt= os.system("date +%k:%M.%S")
- Print("---- "+Data_prompt+"Execution Hold----")
+ print("---- "+str(Data_prompt)+" Execution Hold----")
  time.sleep(180)
 
 
