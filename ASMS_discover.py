@@ -59,6 +59,7 @@ def Scan_Receive_sms(conn, number):
                                           "*":  r"\*",
                                           "'":  r"''",
                                           "@":  r"\@",
+                                          "\x00":  r"",
                                           ".":  r"\."}))
    # DB_Extr(conn, Subdomain, number, Service, re.escape(Message), Time)
     DB_Extr(conn, Subdomain, number, Service, escaped, Time)
