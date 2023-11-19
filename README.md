@@ -1,5 +1,5 @@
 # ASMS_discovery
-Public available SMS scraper
+Public available SMS scraper - Ver 0.2
 
 
 HOW TO USE:
@@ -11,14 +11,19 @@ Download both Python codes (python3):
 
 To do:
 
--change time_stamp format
-
--put exception handler
-
 -comand line setup of refresh time
 
 -colorful prompt
 
--make a list of other interesting sites
+-Make the script more modular
+
+-make a list of other interesting sites (ReadME page)
 
 -implement other sites parser
+
+
+------Improvements already covered:
+
+-change time_stamp format
+
+-Execpetion handling (bad queries, unexpected data format)
