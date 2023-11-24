@@ -25,8 +25,21 @@ def DB_Extr(conn, Subdomain, number, Service, Message, Time):
     Bad_query ='echo "'+query1+'" >> BAD_QUERIES.txt'
     os.system(Bad_query)
    else:
-    print ("New finding: " + Message + " [" + Service + "] - Records created successfully");
+    print ("New finding: " + Message + " [" + Service.strip() + "] - Records created successfully");
 
+def escaping(var_str):
+ escaped = var_str.translate(str.maketrans({"-":  r"\-",
+                                          "]":  r"\]",
+                                          "\\": r"\\",
+                                          "^":  r"\^",
+                                          "$":  r"\$",
+                                          "*":  r"\*",
+                                          "'":  r"''",
+                                          "@":  r"\@",
+                                          "\x00":  r"",
+                                          ".":  r"\."}))
+ return escaped
+ 
 def Scan_Receive_sms(conn, number):
  print("Let's start Receive_smss SCAN of "+number)
  url = "https://receive-smss.com/sms/" + number + "/"
@@ -47,41 +60,53 @@ def Scan_Receive_sms(conn, number):
     Time = line.split('<label>Time</label><br>')[1].split('</div>')[0]  
     flag = flag+1
    if flag > 2:
-    escaped = Message.translate(str.maketrans({"-":  r"\-",
-                                          "]":  r"\]",
-                                          "\\": r"\\",
-                                          "^":  r"\^",
-                                          "$":  r"\$",
-                                          "*":  r"\*",
-                                          "'":  r"''",
-                                          "@":  r"\@",
-                                          "\x00":  r"",
-                                          ".":  r"\."}))
+    escaped = escaping(Message)
     DB_Extr(conn, Subdomain, number, Service, escaped, Time)
     flag = 0
  os.system("rm "+sup_file)
 
-def Ana_Receive_smss():
- print ("ANAGRAFICA Receive-smss.com");
- conn = sqlite3.connect('SMS_DB.db')
- sup_file= 'receive-smss'
- os.system("wget -O " + sup_file + " " + 'https://receive-smss.com/')
- subdomain = "receive-smss.com"
+'''
+                                            <tr>
+                            <td>
+                                67XXX
+                            </td>
+                            <td>
+                                5 hours ago
+                            </td>
+                            <td>
+                                PayPal: Thanks for confirming your phone number. Log in or get the app to manage your account information: https://py.pl/53xEDXoWQsC
+                            </td>
+                        </tr>
+                        '''
+
+def Scan_Smstome_sms(conn, number_link):
+ number = number_link.split('phone/')[1].split('/')[0]
+ print("Let's start smstome SCAN of "+number+" from [ "+number_link.split('/')[1].split('/')[0]+" ]")
+ url = "https://smstome.com" + number_link
+ sup_file= 'SMS-' + number
+ os.system("wget -O " + sup_file + " -q " + url)
+ Subdomain = "smstome.com"
  flag = 0
  with open(sup_file) as file:
   for line in file:
-   if '<div class="number-boxes-itemm-number" style="color:black">' in line:
-    number = line.split('<div class="number-boxes-itemm-number" style="color:black">')[1].split('</div>')[0]
+   if '                                            <tr>' in line and flag == 0:
     flag = flag+1
-   if '<div class="number-boxes-item-country number-boxess-item-country">' in line:
-    nation = line.split('<div class="number-boxes-item-country number-boxess-item-country">')[1].split('</div>')[0]  
+   elif 'td>' in line and flag !=0:
     flag = flag+1
-   if flag > 1:
-    alive = "none"
-    DB_Ana(conn, subdomain, number, alive, nation)
-    flag = 0
-    number = "NULL"
-    nation = "NULL"
+   elif 'td>' not in line and flag !=0:
+    if flag==2:
+     Service_sup = line.split('                                ')[1].split('"')[0]
+     Service = Service_sup
+     flag=flag+1
+    elif flag == 5:
+     Time = line.split('                                ')[1] 
+     flag = flag+1
+    elif flag == 8:
+     Message = line.split('                                ')[1]
+     flag = flag+1
+    elif flag > 9:
+     escaped = escaping(Message)
+     DB_Extr(conn, Subdomain, number, Service, escaped, Time)
+     flag = 0
  os.system("rm "+sup_file)
- Scansione(conn)
- conn.close()
+
